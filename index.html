@@ -3,98 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>极致炫酷 - 越来越好</title>
-    <!-- 字体引入 -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
-    <!-- GSAP动画库 -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
-    <!-- Three.js WebGL -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <title>炫酷越来越好博客</title>
     <style>
-        /* 性能优化基础 */
-        :root {
-            --primary: #ff4d4d;
-            --secondary: #f9c74f;
-            --dark: #1a1a2e;
-            --light: #f8f9fa;
-            --accent: #43aa8b;
-        }
-        
+        /* 全局样式 */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        html {
-            scroll-behavior: smooth;
-            overflow-x: hidden;
         }
         
         body {
-            font-family: 'Noto Sans SC', sans-serif;
-            background-color: var(--dark);
-            color: var(--light);
-            line-height: 1.7;
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #fff;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
             overflow-x: hidden;
-            perspective: 1000px;
-            will-change: transform;
         }
         
-        /* WebGL背景容器 */
-        #webgl-container {
+        /* 粒子背景 */
+        #particles-js {
             position: fixed;
-            top: 0;
-            left: 0;
             width: 100%;
             height: 100%;
+            top: 0;
+            left: 0;
             z-index: -1;
-            opacity: 0.6;
         }
         
-        /* 高级导航栏 */
+        /* 导航栏 */
         header {
-            position: fixed;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 1.5rem 0;
+            position: sticky;
             top: 0;
-            width: 100%;
-            padding: 1.5rem 5%;
+            z-index: 1000;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .nav-container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            z-index: 1000;
-            mix-blend-mode: difference;
-            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
         
         .logo {
-            font-size: 2rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: linear-gradient(90deg, #ff6b6b, #ffa3a3, #ff6b6b);
+            background-size: 200% auto;
             -webkit-background-clip: text;
             background-clip: text;
-            color: transparent;
-            position: relative;
-            overflow: hidden;
+            -webkit-text-fill-color: transparent;
+            animation: gradient 3s linear infinite;
         }
         
-        .logo::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            transform: scaleX(0);
-            transform-origin: right;
-            transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);
-        }
-        
-        .logo:hover::after {
-            transform: scaleX(1);
-            transform-origin: left;
+        @keyframes gradient {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
         }
         
         nav ul {
@@ -108,521 +80,542 @@
         }
         
         nav ul li a {
-            color: var(--light);
+            color: white;
             font-weight: 500;
-            position: relative;
+            transition: all 0.3s;
             padding: 0.5rem 0;
-            overflow: hidden;
+            position: relative;
         }
         
-        nav ul li a::before {
+        nav ul li a::after {
             content: '';
             position: absolute;
             bottom: 0;
             left: 0;
-            width: 100%;
+            width: 0;
             height: 2px;
-            background: var(--primary);
-            transform: translateX(-101%);
-            transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+            background: linear-gradient(90deg, #ff6b6b, #f8c4c4);
+            transition: width 0.3s;
         }
         
-        nav ul li a:hover::before {
-            transform: translateX(0);
-        }
-        
-        /* 3D视差主容器 */
-        .main-content {
-            padding-top: 100vh;
-            position: relative;
-            transform-style: preserve-3d;
-        }
-        
-        /* 流体标题部分 */
-        .hero {
-            position: fixed;
-            top: 0;
-            left: 0;
+        nav ul li a:hover::after {
             width: 100%;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 0 5%;
-            overflow: hidden;
-            z-index: 1;
         }
         
-        .hero h1 {
-            font-size: clamp(3rem, 8vw, 8rem);
-            font-weight: 900;
-            text-align: center;
-            margin-bottom: 2rem;
-            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            line-height: 1.2;
-            opacity: 0;
-        }
-        
-        /* 高级流体动画横幅 */
-        .fluid-banner {
+        /* 炫酷滚动横幅 */
+        .banner-container {
             position: relative;
-            width: 100%;
             height: 150px;
-            margin: 5rem 0;
             overflow: hidden;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.2);
-            transform-style: preserve-3d;
+            margin: 2rem 0;
+            perspective: 1000px;
         }
         
-        .fluid-text {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            white-space: nowrap;
-            font-size: clamp(2rem, 5vw, 4rem);
-            font-weight: 900;
-            color: transparent;
-            -webkit-text-stroke: 2px var(--primary);
-            text-stroke: 2px var(--primary);
-            animation: fluidScroll 20s linear infinite;
-            text-shadow: 0 0 10px rgba(255, 77, 77, 0.5);
-            will-change: transform;
-        }
-        
-        @keyframes fluidScroll {
-            0% { transform: translateY(-50%) translateX(100%); }
-            100% { transform: translateY(-50%) translateX(-100%); }
-        }
-        
-        /* 流体背景元素 */
-        .fluid-background {
+        .banner {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             background: linear-gradient(90deg, 
-                            rgba(255, 77, 77, 0.1) 0%, 
-                            rgba(249, 199, 79, 0.2) 50%, 
-                            rgba(67, 170, 139, 0.1) 100%);
-            border-radius: 20px;
-            overflow: hidden;
+                            rgba(255,107,107,0.1) 0%, 
+                            rgba(255,107,107,0.3) 50%, 
+                            rgba(255,107,107,0.1) 100%);
+            backdrop-filter: blur(5px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            transform-style: preserve-3d;
+            animation: banner-rotate 20s infinite linear;
         }
         
-        .fluid-shape {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(60px);
-            opacity: 0.8;
-            animation: float 15s infinite ease-in-out;
-            will-change: transform;
+        @keyframes banner-rotate {
+            0% { transform: rotateX(0deg) rotateY(0deg); }
+            25% { transform: rotateX(5deg) rotateY(5deg); }
+            50% { transform: rotateX(0deg) rotateY(10deg); }
+            75% { transform: rotateX(-5deg) rotateY(5deg); }
+            100% { transform: rotateX(0deg) rotateY(0deg); }
         }
         
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0); }
-            25% { transform: translate(50px, -30px); }
-            50% { transform: translate(0, -50px); }
-            75% { transform: translate(-50px, 0); }
+        .scrolling-text {
+            display: inline-block;
+            font-size: 3rem;
+            font-weight: bold;
+            white-space: nowrap;
+            animation: scroll 15s linear infinite;
+            text-shadow: 0 0 10px rgba(255, 107, 107, 0.7),
+                         0 0 20px rgba(255, 107, 107, 0.5),
+                         0 0 30px rgba(255, 107, 107, 0.3);
+            background: linear-gradient(90deg, 
+                            #ff6b6b, #f8c4c4, #ff6b6b);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: 
+                scroll 15s linear infinite,
+                gradient 3s linear infinite;
         }
         
-        /* 3D卡片文章区 */
-        .articles {
+        @keyframes scroll {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+        
+        /* 主要内容区 */
+        .main-container {
             width: 90%;
             max-width: 1200px;
-            margin: 0 auto;
-            padding: 5rem 0;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 3rem;
-            transform-style: preserve-3d;
-        }
-        
-        .article-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 2.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
-            transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
-            transform-style: preserve-3d;
-            will-change: transform;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .article-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, 
-                            rgba(255, 77, 77, 0.1) 0%, 
-                            rgba(249, 199, 79, 0.1) 50%, 
-                            rgba(67, 170, 139, 0.1) 100%);
-            z-index: -1;
-            transform: scale(1.1) translateZ(-1px);
-        }
-        
-        .article-card h2 {
-            font-size: 1.8rem;
-            margin-bottom: 1.5rem;
-            color: var(--light);
-            position: relative;
-            display: inline-block;
-        }
-        
-        .article-card h2::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 0;
-            width: 50px;
-            height: 3px;
-            background: var(--primary);
-            transition: width 0.6s cubic-bezier(0.19, 1, 0.22, 1);
-        }
-        
-        .article-card:hover h2::after {
-            width: 100%;
-        }
-        
-        .meta {
+            margin: 3rem auto;
             display: flex;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        /* 文章区 */
+        .content {
+            flex: 3;
+            min-width: 300px;
+            padding-right: 2rem;
+        }
+        
+        article {
+            background: rgba(255, 255, 255, 0.1);
+            margin-bottom: 2rem;
+            padding: 2rem;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        article:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+        
+        article h2 {
+            margin-bottom: 1rem;
+            color: #ff6b6b;
+            font-size: 1.8rem;
+        }
+        
+        .post-meta {
             color: rgba(255, 255, 255, 0.7);
             font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
         }
         
-        .excerpt {
-            margin-bottom: 2rem;
-            color: rgba(255, 255, 255, 0.8);
+        .post-meta span {
+            margin-right: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .post-meta i {
+            margin-right: 0.3rem;
+            color: #ff6b6b;
+        }
+        
+        article p {
+            margin-bottom: 1.5rem;
+            color: rgba(255, 255, 255, 0.9);
         }
         
         .read-more {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: var(--primary);
-            font-weight: 500;
+            display: inline-block;
+            margin-top: 1rem;
+            background: linear-gradient(90deg, #ff6b6b, #f8c4c4);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+            border: none;
+            cursor: pointer;
             position: relative;
-            padding: 0.5rem 0;
             overflow: hidden;
         }
         
         .read-more::before {
             content: '';
             position: absolute;
-            bottom: 0;
-            left: 0;
+            top: 0;
+            left: -100%;
             width: 100%;
-            height: 2px;
-            background: var(--primary);
-            transform: translateX(-101%);
-            transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+            height: 100%;
+            background: linear-gradient(90deg, 
+                            transparent, 
+                            rgba(255, 255, 255, 0.2), 
+                            transparent);
+            transition: all 0.5s;
         }
         
         .read-more:hover::before {
-            transform: translateX(0);
+            left: 100%;
         }
         
-        .read-more svg {
-            width: 20px;
-            height: 20px;
-            fill: var(--primary);
-            transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+        .read-more:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.5);
         }
         
-        .read-more:hover svg {
+        /* 侧边栏 */
+        .sidebar {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .sidebar-widget {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .sidebar-widget h3 {
+            margin-bottom: 1.5rem;
+            color: #ff6b6b;
+            font-size: 1.3rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid rgba(255, 107, 107, 0.3);
+        }
+        
+        .sidebar-widget ul {
+            list-style: none;
+        }
+        
+        .sidebar-widget ul li {
+            margin-bottom: 0.8rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+        }
+        
+        .sidebar-widget ul li:hover {
             transform: translateX(5px);
         }
         
-        /* SVG波形分隔线 */
-        .wave-divider {
-            position: relative;
-            width: 100%;
-            height: 150px;
-            margin: 5rem 0;
-            overflow: hidden;
+        .sidebar-widget ul li a {
+            color: rgba(255, 255, 255, 0.8);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
         }
         
-        .wave-divider svg {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+        .sidebar-widget ul li a:hover {
+            color: #ff6b6b;
+        }
+        
+        .sidebar-widget ul li a::before {
+            content: '→';
+            margin-right: 0.5rem;
+            color: #ff6b6b;
+            opacity: 0;
+            transition: all 0.3s;
+        }
+        
+        .sidebar-widget ul li a:hover::before {
+            opacity: 1;
+        }
+        
+        /* 页脚 */
+        footer {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            color: white;
+            text-align: center;
+            padding: 3rem 0;
+            margin-top: 3rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .footer-content {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .social-links {
+            display: flex;
+            justify-content: center;
+            margin: 1.5rem 0;
+        }
+        
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 0 0.5rem;
+            transition: all 0.3s;
+        }
+        
+        .social-links a:hover {
+            background: #ff6b6b;
+            transform: translateY(-3px);
         }
         
         /* 响应式设计 */
         @media (max-width: 768px) {
-            header {
-                padding: 1rem 5%;
+            .main-container {
+                flex-direction: column;
             }
             
-            .logo {
-                font-size: 1.5rem;
+            .content {
+                padding-right: 0;
+                margin-bottom: 2rem;
             }
             
-            nav ul li {
-                margin-left: 1rem;
+            nav ul {
+                display: none;
             }
             
-            .articles {
-                grid-template-columns: 1fr;
-            }
-            
-            .fluid-banner {
-                height: 100px;
-                margin: 3rem 0;
+            .scrolling-text {
+                font-size: 2rem;
             }
         }
     </style>
 </head>
 <body>
-    <!-- WebGL背景 -->
-    <div id="webgl-container"></div>
+    <!-- 粒子背景 -->
+    <div id="particles-js"></div>
     
     <!-- 导航栏 -->
     <header>
-        <div class="logo">越来越好</div>
-        <nav>
-            <ul>
-                <li><a href="#">首页</a></li>
-                <li><a href="#">文章</a></li>
-                <li><a href="#">项目</a></li>
-                <li><a href="#">关于</a></li>
-                <li><a href="#">联系</a></li>
-            </ul>
-        </nav>
+        <div class="nav-container">
+            <div class="logo">越来越好</div>
+            <nav>
+                <ul>
+                    <li><a href="#">首页</a></li>
+                    <li><a href="#">文章</a></li>
+                    <li><a href="#">关于</a></li>
+                    <li><a href="#">联系</a></li>
+                </ul>
+            </nav>
+        </div>
     </header>
     
-    <!-- 流体标题部分 -->
-    <div class="hero">
-        <h1 class="hero-title">探索无限可能</h1>
-        <h1 class="hero-subtitle">让每一天都越来越好</h1>
-    </div>
-    
-    <!-- 主内容区 -->
-    <div class="main-content">
-        <!-- 流体动画横幅 -->
-        <div class="fluid-banner">
-            <div class="fluid-background">
-                <div class="fluid-shape" style="width: 300px; height: 300px; background: var(--primary); top: -150px; left: -150px;"></div>
-                <div class="fluid-shape" style="width: 400px; height: 400px; background: var(--secondary); bottom: -200px; right: -200px; animation-delay: 2s;"></div>
+    <!-- 炫酷滚动横幅 -->
+    <div class="banner-container">
+        <div class="banner">
+            <div class="scrolling-text">
+                越来越好 ★ 越来越好 ★ 越来越好 ★ 越来越好 ★ 越来越好 ★ 越来越好 ★ 
             </div>
-            <div class="fluid-text">越来越好 · 越来越好 · 越来越好 · 越来越好 · 越来越好 · 越来越好 · 越来越好 ·</div>
         </div>
-        
-        <!-- 文章区 -->
-        <div class="articles">
-            <article class="article-card">
-                <h2>如何保持积极心态</h2>
-                <div class="meta">
-                    <span>📅 2023年10月15日</span>
-                    <span>🏷️ 生活</span>
-                </div>
-                <p class="excerpt">在这个快节奏的社会中，保持积极心态变得越来越重要。本文将分享5个简单实用的方法，帮助你在日常生活中保持乐观向上的心态...</p>
-                <a href="#" class="read-more">
-                    阅读更多
-                    <svg viewBox="0 0 24 24">
-                        <path d="M5 12h14M12 5l7 7-7 7"/>
-                    </svg>
-                </a>
-            </article>
-            
-            <article class="article-card">
-                <h2>前端开发学习路线</h2>
-                <div class="meta">
-                    <span>📅 2023年10月10日</span>
-                    <span>🏷️ 技术</span>
-                </div>
-                <p class="excerpt">想成为一名前端开发工程师但不知道从何开始？本文将从HTML/CSS基础开始，详细介绍成为一名合格前端开发者的学习路径和资源推荐...</p>
-                <a href="#" class="read-more">
-                    阅读更多
-                    <svg viewBox="0 0 24 24">
-                        <path d="M5 12h14M12 5l7 7-7 7"/>
-                    </svg>
-                </a>
-            </article>
-            
-            <article class="article-card">
-                <h2>健康饮食的重要性</h2>
-                <div class="meta">
-                    <span>📅 2023年10月5日</span>
-                    <span>🏷️ 健康</span>
-                </div>
-                <p class="excerpt">饮食直接影响我们的身体健康和精神状态。本文将探讨健康饮食的基本原则，并提供一周的健康食谱建议，帮助你改善饮食习惯...</p>
-                <a href="#" class="read-more">
-                    阅读更多
-                    <svg viewBox="0 0 24 24">
-                        <path d="M5 12h14M12 5l7 7-7 7"/>
-                    </svg>
-                </a>
-            </article>
-        </div>
-        
-        <!-- SVG波形分隔线 -->
-        <div class="wave-divider">
-            <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
-                <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" fill="var(--primary)"></path>
-                <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5" fill="var(--primary)"></path>
-                <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" fill="var(--primary)"></path>
-            </svg>
-        </div>
-        
-        <!-- 更多内容... -->
     </div>
     
+    <!-- 主要内容区 -->
+    <div class="main-container">
+        <!-- 文章区 -->
+        <main class="content">
+            <article>
+                <h2>如何保持积极心态</h2>
+                <div class="post-meta">
+                    <span><i>📅</i> 2023年10月15日</span>
+                    <span><i>🏷️</i> 生活</span>
+                    <span><i>👁️</i> 1024浏览</span>
+                </div>
+                <p>在这个快节奏的社会中，保持积极心态变得越来越重要。本文将分享5个简单实用的方法，帮助你在日常生活中保持乐观向上的心态...</p>
+                <button class="read-more">阅读更多</button>
+            </article>
+            
+            <article>
+                <h2>前端开发学习路线</h2>
+                <div class="post-meta">
+                    <span><i>📅</i> 2023年10月10日</span>
+                    <span><i>🏷️</i> 技术</span>
+                    <span><i>👁️</i> 2048浏览</span>
+                </div>
+                <p>想成为一名前端开发工程师但不知道从何开始？本文将从HTML/CSS基础开始，详细介绍成为一名合格前端开发者的学习路径和资源推荐...</p>
+                <button class="read-more">阅读更多</button>
+            </article>
+            
+            <article>
+                <h2>健康饮食的重要性</h2>
+                <div class="post-meta">
+                    <span><i>📅</i> 2023年10月5日</span>
+                    <span><i>🏷️</i> 健康</span>
+                    <span><i>👁️</i> 512浏览</span>
+                </div>
+                <p>饮食直接影响我们的身体健康和精神状态。本文将探讨健康饮食的基本原则，并提供一周的健康食谱建议，帮助你改善饮食习惯...</p>
+                <button class="read-more">阅读更多</button>
+            </article>
+        </main>
+        
+        <!-- 侧边栏 -->
+        <aside class="sidebar">
+            <div class="sidebar-widget">
+                <h3>关于我</h3>
+                <p style="color: rgba(255,255,255,0.8);">欢迎来到我的博客！我是一名热爱生活、热爱技术的博主，在这里分享我的思考和经验。</p>
+            </div>
+            
+            <div class="sidebar-widget">
+                <h3>热门分类</h3>
+                <ul>
+                    <li><a href="#">生活随笔</a></li>
+                    <li><a href="#">前端技术</a></li>
+                    <li><a href="#">健康养生</a></li>
+                    <li><a href="#">旅行见闻</a></li>
+                    <li><a href="#">读书笔记</a></li>
+                </ul>
+            </div>
+            
+            <div class="sidebar-widget">
+                <h3>热门文章</h3>
+                <ul>
+                    <li><a href="#">如何保持积极心态</a></li>
+                    <li><a href="#">2023年前端技术趋势</a></li>
+                    <li><a href="#">健康饮食的重要性</a></li>
+                    <li><a href="#">日本旅行攻略</a></li>
+                    <li><a href="#">高效阅读的技巧</a></li>
+                </ul>
+            </div>
+        </aside>
+    </div>
+    
+    <!-- 页脚 -->
+    <footer>
+        <div class="footer-content">
+            <h3 style="margin-bottom: 1rem; color: #ff6b6b;">越来越好博客</h3>
+            <div class="social-links">
+                <a href="#">微</a>
+                <a href="#">Q</a>
+                <a href="#">微</a>
+                <a href="#">G</a>
+                <a href="#">T</a>
+            </div>
+            <p>© 2023 越来越好博客. 保留所有权利.</p>
+            <p style="margin-top: 0.5rem; color: rgba(255,255,255,0.6);">联系方式: info@yuelaiyuehao.com</p>
+        </div>
+    </footer>
+    
+    <!-- 粒子JS库 -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>
-        // 初始化Three.js场景
-        const webglContainer = document.getElementById('webgl-container');
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ 
-            antialias: true,
-            alpha: true
-        });
-        
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        webglContainer.appendChild(renderer.domElement);
-        
-        // 创建粒子系统
-        const particlesGeometry = new THREE.BufferGeometry();
-        const particleCount = 2000;
-        
-        const posArray = new Float32Array(particleCount * 3);
-        
-        for(let i = 0; i < particleCount * 3; i++) {
-            posArray[i] = (Math.random() - 0.5) * 10;
-        }
-        
-        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-        
-        const particlesMaterial = new THREE.PointsMaterial({
-            size: 0.02,
-            color: new THREE.Color(0xff4d4d),
-            transparent: true,
-            opacity: 0.8,
-            blending: THREE.AdditiveBlending
-        });
-        
-        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
-        scene.add(particlesMesh);
-        
-        camera.position.z = 3;
-        
-        // 动画循环
-        function animate() {
-            requestAnimationFrame(animate);
-            
-            particlesMesh.rotation.x += 0.0005;
-            particlesMesh.rotation.y += 0.0005;
-            
-            renderer.render(scene, camera);
-        }
-        
-        animate();
-        
-        // 窗口大小调整
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
-        
-        // GSAP动画
-        gsap.registerPlugin(ScrollTrigger);
-        
-        // 标题动画
-        gsap.from('.hero-title', {
-            opacity: 0,
-            y: 50,
-            duration: 1.5,
-            ease: 'power3.out'
-        });
-        
-        gsap.from('.hero-subtitle', {
-            opacity: 0,
-            y: 50,
-            duration: 1.5,
-            delay: 0.3,
-            ease: 'power3.out'
-        });
-        
-        // 卡片3D效果
-        const cards = gsap.utils.toArray('.article-card');
-        
-        cards.forEach(card => {
-            gsap.from(card, {
-                scrollTrigger: {
-                    trigger: card,
-                    start: 'top 80%',
-                    toggleActions: 'play none none none'
+        // 初始化粒子背景
+        particlesJS("particles-js", {
+            "particles": {
+                "number": {
+                    "value": 80,
+                    "density": {
+                        "enable": true,
+                        "value_area": 800
+                    }
                 },
-                opacity: 0,
-                y: 50,
-                duration: 1,
-                ease: 'power3.out'
-            });
-            
-            card.addEventListener('mousemove', (e) => {
-                const xAxis = (card.offsetWidth / 2 - e.offsetX) / 25;
-                const yAxis = (card.offsetHeight / 2 - e.offsetY) / 25;
-                gsap.to(card, {
-                    rotationY: xAxis,
-                    rotationX: yAxis,
-                    ease: 'power1.out',
-                    duration: 0.5
-                });
-            });
-            
-            card.addEventListener('mouseleave', () => {
-                gsap.to(card, {
-                    rotationY: 0,
-                    rotationX: 0,
-                    ease: 'elastic.out(1, 0.3)',
-                    duration: 1
-                });
-            });
-        });
-        
-        // 视差滚动效果
-        gsap.to('.main-content', {
-            scrollTrigger: {
-                trigger: '.main-content',
-                start: 'top top',
-                end: '+=1000',
-                scrub: true
+                "color": {
+                    "value": "#ff6b6b"
+                },
+                "shape": {
+                    "type": "circle",
+                    "stroke": {
+                        "width": 0,
+                        "color": "#000000"
+                    },
+                    "polygon": {
+                        "nb_sides": 5
+                    }
+                },
+                "opacity": {
+                    "value": 0.5,
+                    "random": false,
+                    "anim": {
+                        "enable": false,
+                        "speed": 1,
+                        "opacity_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "size": {
+                    "value": 3,
+                    "random": true,
+                    "anim": {
+                        "enable": false,
+                        "speed": 40,
+                        "size_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 150,
+                    "color": "#ff6b6b",
+                    "opacity": 0.4,
+                    "width": 1
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 2,
+                    "direction": "none",
+                    "random": false,
+                    "straight": false,
+                    "out_mode": "out",
+                    "bounce": false,
+                    "attract": {
+                        "enable": false,
+                        "rotateX": 600,
+                        "rotateY": 1200
+                    }
+                }
             },
-            z: 100,
-            rotationX: -5,
-            ease: 'none'
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": {
+                        "enable": true,
+                        "mode": "grab"
+                    },
+                    "onclick": {
+                        "enable": true,
+                        "mode": "push"
+                    },
+                    "resize": true
+                },
+                "modes": {
+                    "grab": {
+                        "distance": 140,
+                        "line_linked": {
+                            "opacity": 1
+                        }
+                    },
+                    "bubble": {
+                        "distance": 400,
+                        "size": 40,
+                        "duration": 2,
+                        "opacity": 8,
+                        "speed": 3
+                    },
+                    "repulse": {
+                        "distance": 200,
+                        "duration": 0.4
+                    },
+                    "push": {
+                        "particles_nb": 4
+                    },
+                    "remove": {
+                        "particles_nb": 2
+                    }
+                }
+            },
+            "retina_detect": true
         });
         
-        // 流体形状动画
-        const shapes = gsap.utils.toArray('.fluid-shape');
-        
-        shapes.forEach(shape => {
-            gsap.to(shape, {
-                x: 'random(-100, 100)',
-                y: 'random(-100, 100)',
-                duration: 'random(10, 20)',
-                repeat: -1,
-                repeatRefresh: true,
-                ease: 'sine.inOut'
-            });
+        // 鼠标跟随效果
+        document.addEventListener('mousemove', function(e) {
+            const banner = document.querySelector('.banner');
+            const xAxis = (window.innerWidth / 2 - e.pageX) / 25;
+            const yAxis = (window.innerHeight / 2 - e.pageY) / 25;
+            banner.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
         });
     </script>
 </body>
