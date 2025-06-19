@@ -1,9 +1,40 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-    <title>Welcome to sw.592273.xyz</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>越来越好</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            font-family: "Microsoft YaHei", sans-serif;
+            overflow: hidden;
+        }
+        
+        .scrolling-text {
+            white-space: nowrap;
+            font-size: 3rem;
+            color: #ff6b6b;
+            animation: scroll 10s linear infinite;
+        }
+        
+        @keyframes scroll {
+            0% {
+                transform: translateX(100vw);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Hello! This is my website.</h1>
+    <div class="scrolling-text">越来越好 越来越好 越来越好 越来越好</div>
 </body>
 </html>
